@@ -117,6 +117,7 @@ public class UserController {
     @ApiOperation("删除用户")
     @DeleteMapping("/{username}/deleteUser")
     public String deleteUser(@PathVariable String username) {
+        //test
         try {
             userService.deleteUser(username);
             return "用户删除成功";
