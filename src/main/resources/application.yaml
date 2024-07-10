@@ -1,3 +1,7 @@
+minio:
+  endpoint: http://ac9d1d1bf60b64970a0ec0aefae790bb-447807069.us-east-1.elb.amazonaws.com:9000
+  access-key: minioadmin
+  secret-key: minioadmin
 spring:
   datasource:
     url: jdbc:mysql://127.0.0.1:3306/k8sminio?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai&rewriteBatchedStatements=true
@@ -34,6 +38,6 @@ knife4j:
         group-name: default
         api-rule: package
         api-rule-resources:
-          - com.byr.project.controller
+          - com.example.k8s_springboot.controller
 
 
