@@ -35,33 +35,19 @@ component "Kubernetes Cluster" {
 
     package "Security" {
         [Secrets/ConfigMaps]
-        [Network Policies]
     }
 
     package "Monitoring & Logging" {
         [Prometheus]
         [Grafana]
-        [ELK Stack]
     }
 
-    package "Scalability & Resilience" {
+    package "Scalability" {
         [Horizontal Pod Autoscaler]
     }
   
     package "Caching" {
-        [Redis/Memcached]
-    }
-  
-    package "Message Queue" {
-        [RabbitMQ/Kafka]
-    }
-  
-    package "Backup" {
-        [Backup Service]
-    }
-  
-    package "Service Mesh" {
-        [Istio]
+        [Redis]
     }
 
     Ingress --> [Web App Pod]
@@ -76,20 +62,9 @@ component "Kubernetes Cluster" {
     [API Service Pod] --> [Metadata DB (MySQL/PostgreSQL)]
     [Metadata DB (MySQL/PostgreSQL)] --> [Persistent Volume Claim]
     [Persistent Volume Claim] --> [Persistent Volume]
-    [API Service Pod] --> [Redis/Memcached]
-    [File Processing Service Pod] --> [RabbitMQ/Kafka]
-    [RabbitMQ/Kafka] --> [Backup Service]
-    [Auth Service Pod] --> [Istio]
-    [File Processing Service Pod] --> [Istio]
-    [API Service Pod] --> [Istio]
-    [Web App Pod] --> [Istio]
-    [Mobile App Pod] --> [Istio]
-    [Desktop App Pod] --> [Istio]
+    [API Service Pod] --> [Redis]
     [Secrets/ConfigMaps] --> [Auth Service Pod]
-    [Network Policies] --> [Auth Service Pod]
     [Prometheus] --> [Grafana]
-    [Prometheus] --> [ELK Stack]
-    [Grafana] --> [ELK Stack]
     [Horizontal Pod Autoscaler] --> [API Service Pod]
     [Horizontal Pod Autoscaler] --> [File Processing Service Pod]
 }
@@ -164,7 +139,6 @@ KloudVault/
 │   │   ├── secrets.yaml
 │   ├── configmaps/
 │   │   ├── configmaps.yaml
-│   ├── network_policies.yaml
 ├── monitoring_logging/
 │   ├── prometheus/
 │   │   ├── deployment.yaml
@@ -176,12 +150,7 @@ KloudVault/
 │   │   ├── service.yaml
 │   │   ├── config/
 │   │   │   ├── grafana.ini
-│   ├── elk/
-│   │   ├── deployment.yaml
-│   │   ├── service.yaml
-│   │   ├── config/
-│   │   │   ├── logstash.conf
-├── scalability_resilience/
+├── scalability/
 │   ├── hpa/
 │   │   ├── api_service_hpa.yaml
 │   │   ├── file_processing_service_hpa.yaml
@@ -189,24 +158,45 @@ KloudVault/
 │   ├── redis/
 │   │   ├── deployment.yaml
 │   │   ├── service.yaml
-│   ├── memcached/
-│   │   ├── deployment.yaml
-│   │   ├── service.yaml
-├── message_queue/
-│   ├── rabbitmq/
-│   │   ├── deployment.yaml
-│   │   ├── service.yaml
-│   ├── kafka/
-│   │   ├── deployment.yaml
-│   │   ├── service.yaml
-├── backup/
-│   ├── backup_service/
-│   │   ├── deployment.yaml
-│   │   ├── service.yaml
-├── service_mesh/
-│   ├── istio/
-│   │   ├── istio-config.yaml
 ├── ingress/
 │   ├── ingress.yaml
 └── README.md
 ```
+
+# Features
+
+## Core Features
+
+- **Multi-Platform Access**: Access your files seamlessly across web, mobile, and desktop applications.
+- **Secure Storage**: Utilize robust security measures with Kubernetes secrets and config maps to ensure your data is safe.
+- **Scalable Architecture**: Automatically scale your storage needs with Kubernetes' horizontal pod autoscaler.
+- **Persistent Storage**: Reliable and persistent storage using Kubernetes Persistent Volumes (PVs) and Persistent Volume Claims (PVCs).
+- **High Availability**: Ensure data availability and reliability with managed object storage (S3/MinIO) and metadata databases (MySQL/PostgreSQL).
+
+## Innovative Features
+
+- **AI-Powered Document Management**:
+  - **RAG Q&A Retrieval**: Integrate with large language model APIs to enable intelligent retrieval-augmented generation (RAG) for advanced question-answering capabilities.
+  - **Document Summarization**: Automatically generate summaries of stored documents using state-of-the-art language models, saving time and improving productivity.
+  - **Version Control**: Implement Git-like version management for documents, allowing users to track changes, revert to previous versions, and collaborate efficiently.
+
+## Advanced Capabilities
+
+- **Real-Time Caching**: Improve performance with Redis-based caching for frequently accessed data.
+- **Monitoring and Logging**: Comprehensive monitoring and logging with Prometheus and Grafana for real-time insights and detailed analysis.
+- **Authentication and Authorization**: Secure access to your storage with dedicated authentication services and role-based access control.
+
+## User Experience
+
+- **Intuitive Interface**: User-friendly interfaces for web, mobile, and desktop platforms ensure a seamless and consistent user experience.
+- **Document Collaboration**: Enhance collaboration with features like shared access, version history, and real-time editing (planned for future releases).
+- **Customizable Settings**: Personalize your storage experience with flexible configuration options.
+
+## Security and Compliance
+
+- **Data Encryption**: Ensure data security with encryption at rest and in transit.
+- **Compliance**: Adhere to industry standards and regulations for data storage and management.
+
+## Backup and Recovery
+
+- **Data Backup**: Automated backup services to protect your data and ensure quick recovery in case of data loss (planned for future releases).
