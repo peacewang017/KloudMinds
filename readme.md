@@ -21,6 +21,8 @@ component "Kubernetes Cluster" {
         [API Service Pod]
         [Auth Service Pod]
         [File Processing Service Pod]
+        [RAG Retrieval Pod]
+        [AI Generation Pod]
     }
 
     package "Persistent Storage" {
@@ -58,6 +60,8 @@ component "Kubernetes Cluster" {
     [Desktop App Pod] --> [API Service Pod]
     [API Service Pod] --> [Auth Service Pod]
     [API Service Pod] --> [File Processing Service Pod]
+    [API Service Pod] --> [RAG Retrieval Pod]
+    [RAG Retrieval Pod] --> [AI Generation Pod]
     [File Processing Service Pod] --> [Object Storage (S3/MinIO)]
     [API Service Pod] --> [Metadata DB (MySQL/PostgreSQL)]
     [Metadata DB (MySQL/PostgreSQL)] --> [Persistent Volume Claim]
@@ -67,13 +71,14 @@ component "Kubernetes Cluster" {
     [Prometheus] --> [Grafana]
     [Horizontal Pod Autoscaler] --> [API Service Pod]
     [Horizontal Pod Autoscaler] --> [File Processing Service Pod]
+    [Horizontal Pod Autoscaler] --> [RAG Retrieval Pod]
+    [Horizontal Pod Autoscaler] --> [AI Generation Pod]
 }
 
 @enduml
 ```
 
 ## Directory Structure
-
 ```plaintext
 KloudVault/
 ├── frontend/
@@ -121,6 +126,20 @@ KloudVault/
 │   │   ├── src/
 │   │   │   ├── process.py
 │   │   │   └── requirements.txt
+│   ├── rag_retrieval_service/
+│   │   ├── Dockerfile
+│   │   ├── deployment.yaml
+│   │   ├── service.yaml
+│   │   ├── src/
+│   │   │   ├── retrieve.py
+│   │   │   └── requirements.txt
+│   ├── ai_generation_service/
+│   │   ├── Dockerfile
+│   │   ├── deployment.yaml
+│   │   ├── service.yaml
+│   │   ├── src/
+│   │   │   ├── generate.py
+│   │   │   └── requirements.txt
 ├── storage/
 │   ├── persistent_volume.yaml
 │   ├── persistent_volume_claim.yaml
@@ -154,6 +173,8 @@ KloudVault/
 │   ├── hpa/
 │   │   ├── api_service_hpa.yaml
 │   │   ├── file_processing_service_hpa.yaml
+│   │   ├── rag_retrieval_service_hpa.yaml
+│   │   ├── ai_generation_service_hpa.yaml
 ├── caching/
 │   ├── redis/
 │   │   ├── deployment.yaml
