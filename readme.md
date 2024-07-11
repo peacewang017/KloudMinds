@@ -221,3 +221,4 @@ KloudVault/
 ## Backup and Recovery
 
 - **Data Backup**: Automated backup services to protect your data and ensure quick recovery in case of data loss (planned for future releases).
+
