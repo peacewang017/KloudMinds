@@ -17,4 +17,4 @@ ENV OPENAI_API_KEY=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
 EXPOSE 5000
 
 # 运行应用
-CMD ["python", "AI-chat.py"]
+CMD ["python", "ai-chat-server.py"]

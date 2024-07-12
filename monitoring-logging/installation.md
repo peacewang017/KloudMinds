@@ -21,15 +21,11 @@ kubectl --namespace default get pods -l "release=prometheus-operator"
 kubectl port-forward svc/prometheus-operator-kube-p-prometheus 9090:9090 -n default
 ```
 
-?
-
 #### Alertmanager
 
 ```bash
 kubectl port-forward svc/prometheus-operator-kube-p-alertmanager 9093:9093 -n default
 ```
-
-?
 
 #### Grafana
 

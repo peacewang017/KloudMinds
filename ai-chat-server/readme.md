@@ -7,6 +7,9 @@ sudo systemctl start docker
 docker login
 
 # 创建和推送
-sudo docker build -t peacewang017/ai-chat:latest .
-sudo docker push peacewang017/ai-chat:latest
+sudo docker build -t peacewang017/ai-chat-server:latest .
+sudo docker push peacewang017/ai-chat-server:latest
 ```
+
+# 2 部署在集群中
+...

@@ -9,7 +9,7 @@ v1 进行了一些基础功能的测试，主要是调试 MinIO、MySQL 模块�
 ![](images/v1.drawio.png)
 
 ## 1.1 MinIO Service
-![](image.png)
+![](images/image.pngimage.png)
 
 使用挂载在 node 上的 Amazon EFS 作为 storageclass;
 
