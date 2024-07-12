@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: my-efs-pvc
+spec:
+  accessModes:
+    - ReadWriteMany  # EFS支持多个Pod同时读写
+  resources:
+    requests:
+      storage: 5Gi  # 这个值对EFS来说是象征性的，因为EFS是弹性的
+  storageClassName: efs-default  # 使用默认的EFS StorageClass

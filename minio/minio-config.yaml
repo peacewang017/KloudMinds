@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: minio-config
+data:
+  config.json: |
+    {
+      "version": "1",
+      "credential": {
+        "accessKey": "minioadmin",
+        "secretKey": "minioadmin"
+      },
+      "region": "us-east-1",
+      "logger": {
+        "console": {
+          "enable": true
+        },
+        "file": {
+          "enable": false,
+          "filename": ""
+        }
+      },
+      "storageClass": {
+        "standard": "STANDARD",
+        "rrs": "REDUCED_REDUNDANCY"
+      },
+      "api": {
+        "signature": "v4"
+      }
+    }
