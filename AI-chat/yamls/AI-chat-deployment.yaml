@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-chat-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ai-chat-server
+  template:
+    metadata:
+      labels:
+        app: ai-chat-server
+    spec:
+      containers:
+      - name: ai-chat-server
+        image: your_dockerhub_username/ai-chat-server:latest
+        ports:
+        - containerPort: 5000
+        env:
+        - name: OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: openai-api-key
+              key: api_key
