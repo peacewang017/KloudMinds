@@ -1,4 +1,7 @@
-# KloudVault, a cloud-native storage solution built on Kubernetes.
+# KloudMinds: Cloud-Native Storage Solution for Big Data and AI-Driven Applications
+KloudMinds is a cloud-native storage solution designed specifically for big data and AI-driven applications. It supports cross-platform access, secure storage, scalable architecture, and robust AI capabilities.
+
+
 
 ## Architecture
 
@@ -80,7 +83,7 @@ component "Kubernetes Cluster" {
 
 ## Directory Structure
 ```plaintext
-KloudVault/
+KloudMinds/
 ├── frontend/
 │   ├── web_app/
 │   │   ├── Dockerfile
