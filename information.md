@@ -259,3 +259,30 @@ Future work for KloudMinds involves testing and refining various aspects of the 
 * **Development** : Simplify component modifications, iterative development, and system expansion.
 
 These efforts will ensure that KloudMinds continues to provide superior performance, security, and functionality, solidifying its position as the premier choice for AI-driven and big data applications.
+
+
+```plantuml
+@startuml
+actor User
+
+participant "Frontend" as FE
+participant "Backend" as BE
+participant "RabbitMQ" as MQ
+participant "MinIO" as MinIO
+participant "Parsing Module" as PM
+participant "Elasticsearch" as ES
+
+User -> FE : Upload File
+FE -> BE : Send File
+BE -> MQ : Send Message
+BE -> MinIO : Store File
+PM -> MQ : Read Message
+PM -> MinIO : Retrieve File
+PM -> ES : Store Parsed Data
+User -> BE : Search Request
+BE -> ES : Query
+ES -> BE : Search Results
+BE -> User : Return Results
+
+@enduml
+```
