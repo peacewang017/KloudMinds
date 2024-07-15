@@ -1,5 +1,5 @@
 minio:
-  endpoint: http://ac9d1d1bf60b64970a0ec0aefae790bb-447807069.us-east-1.elb.amazonaws.com:9000
+  endpoint: http://3.237.17.173:32000
   access-key: minioadmin
   secret-key: minioadmin
 spring:

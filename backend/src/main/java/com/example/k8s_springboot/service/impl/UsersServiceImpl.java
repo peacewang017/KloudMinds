@@ -199,12 +199,17 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, User> implements 
             User user = usersMapper.selectByUsername(username);
             if (user == null) throw new Exception("用户未找到");
 
+            // 获取文件信息以得到文件大小
+            StatObjectResponse statObject = minioClient.statObject(
+                    StatObjectArgs.builder().bucket(user.getBucketName()).object(objectName).build());
+            long fileSize = statObject.size();
+
             // 删除MinIO中的文件
             minioClient.removeObject(
                     RemoveObjectArgs.builder().bucket(user.getBucketName()).object(objectName).build());
 
-            // 更新用户存储使用量
-            user.setCurrentUsage(user.getCurrentUsage() - 1);
+            // 更新用户存储使用量，减去文件大小
+            user.setCurrentUsage(user.getCurrentUsage() - fileSize);
             usersMapper.updateById(user);
         } catch (Exception e) {
             e.printStackTrace();
