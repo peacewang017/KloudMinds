@@ -9,17 +9,19 @@ import fitz  # pymupdf
 import docx
 import os
 import traceback
+import weaviate
+from openai import OpenAI
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Environment variables for configuration
-RABBITMQ_HOST = os.getenv('RABBITMQ_HOST', '44.201.121.216')
+RABBITMQ_HOST = os.getenv('RABBITMQ_HOST', '34.235.116.97')
 RABBITMQ_PORT = int(os.getenv('RABBITMQ_PORT', 30007))
 RABBITMQ_QUEUE = os.getenv('RABBITMQ_QUEUE', 'file-upload-exchange')
 
-MINIO_HOST = os.getenv('MINIO_HOST', '44.201.121.216:32000')
+MINIO_HOST = os.getenv('MINIO_HOST', '34.235.116.97:32000')
 MINIO_ACCESS_KEY = os.getenv('MINIO_ACCESS_KEY', 'minioadmin')
 MINIO_SECRET_KEY = os.getenv('MINIO_SECRET_KEY', 'minioadmin')
 
@@ -27,6 +29,8 @@ ELASTICSEARCH_HOST = os.getenv('ELASTICSEARCH_HOST', 'http://localhost:9200')
 ELASTICSEARCH_API_KEY = os.getenv('ELASTICSEARCH_API_KEY', 'N3lDX3JKQUJWbDhKWVVTcHEyemU6TWRKdFcwanFURTJIa0xnb3NGTVMtdw==')
 ELASTIC_USERNAME = os.getenv('ELASTIC_USERNAME', 'elastic')
 ELASTIC_PASSWORD = os.getenv('ELASTIC_PASSWORD', 'ECb576Hnv304uL2JVSae9G83')
+
+WEAVIATE_HOST = os.getenv('WEAVIATE_HOST', 'http://a175176d507474fc596ea7a3791b9786-1160213758.us-east-1.elb.amazonaws.com:80')
 
 # Initialize MinIO client
 minio_client = Minio(MINIO_HOST,
@@ -37,6 +41,15 @@ minio_client = Minio(MINIO_HOST,
 # Initialize Elasticsearch client
 es = Elasticsearch(ELASTICSEARCH_HOST, 
                    api_key=ELASTICSEARCH_API_KEY)
+
+# Initialize Weaviate client
+weaviate_client = weaviate.Client(WEAVIATE_HOST)
+
+# Initialize LLM
+llm = OpenAI(
+    api_key="0de8399931df7b7e632c87930f8c6ad3.oobORQw8lNN5oIoR",
+    base_url="https://open.bigmodel.cn/api/paas/v4/"
+)
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -61,6 +74,12 @@ def parse_file(bucket_name, file_name):
     else:
         raise ValueError(f"Unsupported file type: {file_name}")
 
+def chunk_text(text, chunk_size=1000, overlap=100):
+    chunks = []
+    for i in range(0, len(text), chunk_size - overlap):
+        chunks.append(text[i:i + chunk_size])
+    return chunks
+
 def save_to_elasticsearch(bucket_name, file_name, content):
     """Saves the parsed content to Elasticsearch."""
     doc = {
@@ -71,6 +90,18 @@ def save_to_elasticsearch(bucket_name, file_name, content):
     es.index(index="files", body=doc)
     logger.info("Saved to Elasticsearch")
 
+def save_to_weaviate(bucket_name, file_name, content):
+    chunks = chunk_text(content)
+    for i, chunk in enumerate(chunks):
+        data_object = {
+            'bucketName': bucket_name,
+            'fileName': file_name,
+            'content': chunk,
+            'chunk_id': f"{file_name}_chunk_{i}"
+        }
+        weaviate_client.data_object.create(data_object, "DocumentChunk")
+        logger.info(f"Chunk {i} of file {file_name} saved to Weaviate")
+
 def on_message(ch, method, properties, body):
     """Callback function to handle messages from RabbitMQ."""
     message = json.loads(body)  # Use a safe method to deserialize
@@ -80,6 +111,7 @@ def on_message(ch, method, properties, body):
     try:
         content = parse_file(bucket_name, file_name)
         save_to_elasticsearch(bucket_name, file_name, content)
+        save_to_weaviate(bucket_name, file_name, content)
         logger.info(f"File {file_name} from bucket {bucket_name} indexed successfully.")
     except Exception as e:
         logger.error(f"Failed to process file {file_name} from bucket {bucket_name}: {str(e)}")
@@ -125,10 +157,45 @@ def search():
     
     return jsonify(results)
 
+@app.route('/rag_search', methods=['GET'])
+def rag_search():
+    bucket_name = request.args.get('bucketname')
+    prompt = request.args.get('prompt')
+    
+    if not bucket_name or not prompt:
+        return jsonify({'error': 'bucketname and prompt are required'}), 400
+    
+    # Query Weaviate for relevant chunks
+    weaviate_query = {
+        "bool": {
+            "must": [
+                {"match": {"bucketName": bucket_name}},
+                {"match_phrase": {"content": prompt}}
+            ]
+        }
+    }
+    
+    weaviate_response = weaviate_client.query.raw({"query": weaviate_query})
+    chunks = [hit['_source']['content'] for hit in weaviate_response['hits']['hits']]
+    context = ' '.join(chunks)
+    
+    # Generate answer using OpenAI
+    response = llm.chat.completions.create(
+        model="glm-4",
+        messages=[
+            {"role": "user", "content": f"{context}\n\nQ: {prompt}\nA:"}
+        ],
+        top_p=0.7,
+        temperature=0.7
+    )
+    answer = response.choices[0].text.strip()
+    
+    return jsonify({'answer': answer})
+
 if __name__ == '__main__':
     # Start RabbitMQ listener in a separate thread
     threading.Thread(target=start_rabbitmq_listener).start()
-    es.info()
+    # es.info()
     
     # Start Flask app
     app.run(host='0.0.0.0', port=5000)

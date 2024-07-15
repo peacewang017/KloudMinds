@@ -53,10 +53,10 @@ kubectl get secret quickstart-es-elastic-user -o go-template='{{.data.elastic | 
 ```shell
 kubectl port-forward service/quickstart-kb-http 5601
 
-## 浏览器访问 localhost:5601
+## 浏览器访问 https://localhost:5601
 ```
 
-用户名：elastic search
+用户名：elastic
 
 密码：2.1 中获得的密码
 

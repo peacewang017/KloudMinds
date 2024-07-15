@@ -18,12 +18,14 @@ filename
 
 content
 
-# 3 parser server 行为
+# 4 parser server 行为
 
 ## 保存
 这个 server 监听 rabbitmq，在里面有消息的时候，根据消息的 bucketname，filename 获取 MinIO 中文件的内容，保存为 content（如果 filename 后缀是 txt，直接转为字符串;如果后缀是 docx，doc，pdf 则需要调库解析为字符串）。
 
 将 bucketname，filename，content 三个字符串传入 elastic-search 中。
 
-## 搜索
-对 server 发送一个请求，包含一个 bucketname 字符串和一个 targetcontent，返回所有满足 （bucketname 匹配）&&（content 包含 targetcontent）的 filename。
+## elastic-search 搜索
+对 elastic-search 发送一个请求，包含一个 bucketname 字符串和一个 targetcontent，返回所有满足 （bucketname 匹配）&&（content 包含 targetcontent）的 filename。
+
+## RAG
