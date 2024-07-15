@@ -3,22 +3,41 @@ parse2ES-server 连接到一个 MInIO 对象存储，一个 RabbitMQ 消息队�
 # 1 rabbitmq 数据格式
 rabbitmq 中的消息格式为（即 Java 后端是这样放入的格式）：
 
-```Java
-message = new HashMap<>(); message.put("bucketName", bucketName); message.put("fileName", fileName); message.put("userId", String.valueOf(currentUser.getId())); rabbitTemplate.convertAndSend("file-upload-exchange", "file.uploaded", message);
-```
+{
+    bucketname:
+
+    filename:
+}
 
 # 2 MinIO 数据格式
-MinIO 中的每一个 bucket 中，主键为 filename，此外还包含 content 字符串。
+bucket - filename - filecontent
 
 # 3 elastic search 数据格式
+{
+    buckername:
 
-buckername
+    filename:
 
-filename
+    content:
+}
 
-content
+# 4 weaviate 数据格式
+{
+    bucketname:
+    filename:
+    contentchunk:
+    chunkid
+}
 
-# 4 parser server 行为
+# 5 search 格式
+
+# 6 RAG 格式
+{
+    bucketname:
+    prompt:
+}
+
+# 5 parser server 行为
 
 ## 保存
 这个 server 监听 rabbitmq，在里面有消息的时候，根据消息的 bucketname，filename 获取 MinIO 中文件的内容，保存为 content（如果 filename 后缀是 txt，直接转为字符串;如果后缀是 docx，doc，pdf 则需要调库解析为字符串）。

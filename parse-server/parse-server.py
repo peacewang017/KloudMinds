@@ -17,11 +17,11 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Environment variables for configuration
-RABBITMQ_HOST = os.getenv('RABBITMQ_HOST', '34.235.116.97')
+RABBITMQ_HOST = os.getenv('RABBITMQ_HOST', '100.27.200.64')
 RABBITMQ_PORT = int(os.getenv('RABBITMQ_PORT', 30007))
 RABBITMQ_QUEUE = os.getenv('RABBITMQ_QUEUE', 'file-upload-exchange')
 
-MINIO_HOST = os.getenv('MINIO_HOST', '34.235.116.97:32000')
+MINIO_HOST = os.getenv('MINIO_HOST', '100.27.200.64:32000')
 MINIO_ACCESS_KEY = os.getenv('MINIO_ACCESS_KEY', 'minioadmin')
 MINIO_SECRET_KEY = os.getenv('MINIO_SECRET_KEY', 'minioadmin')
 
@@ -110,7 +110,7 @@ def on_message(ch, method, properties, body):
     
     try:
         content = parse_file(bucket_name, file_name)
-        save_to_elasticsearch(bucket_name, file_name, content)
+        # save_to_elasticsearch(bucket_name, file_name, content)
         save_to_weaviate(bucket_name, file_name, content)
         logger.info(f"File {file_name} from bucket {bucket_name} indexed successfully.")
     except Exception as e:
@@ -122,7 +122,7 @@ def start_rabbitmq_listener():
     try:
         connection = pika.BlockingConnection(pika.ConnectionParameters(host=RABBITMQ_HOST, port=RABBITMQ_PORT))
         channel = connection.channel()
-        channel.exchange_declare(exchange=RABBITMQ_QUEUE, exchange_type='direct')
+        # channel.exchange_declare(exchange=RABBITMQ_QUEUE, exchange_type='direct', durable=True)
         channel.queue_declare(queue=RABBITMQ_QUEUE)
         channel.queue_bind(exchange=RABBITMQ_QUEUE, queue=RABBITMQ_QUEUE)
         channel.basic_consume(queue=RABBITMQ_QUEUE, on_message_callback=on_message, auto_ack=True)
@@ -165,37 +165,63 @@ def rag_search():
     if not bucket_name or not prompt:
         return jsonify({'error': 'bucketname and prompt are required'}), 400
     
-    # Query Weaviate for relevant chunks
-    weaviate_query = {
-        "bool": {
-            "must": [
-                {"match": {"bucketName": bucket_name}},
-                {"match_phrase": {"content": prompt}}
-            ]
+    # Construct the Weaviate query
+    weaviate_query = """
+    {
+        Get {
+            DocumentChunk(
+                where: {
+                    path: ["content"],
+                    operator: Equal,
+                    valueText: "%s"
+                }
+            ) {
+                content
+            }
         }
     }
-    
-    weaviate_response = weaviate_client.query.raw({"query": weaviate_query})
-    chunks = [hit['_source']['content'] for hit in weaviate_response['hits']['hits']]
-    context = ' '.join(chunks)
-    
-    # Generate answer using OpenAI
-    response = llm.chat.completions.create(
-        model="glm-4",
-        messages=[
-            {"role": "user", "content": f"{context}\n\nQ: {prompt}\nA:"}
-        ],
-        top_p=0.7,
-        temperature=0.7
-    )
-    answer = response.choices[0].text.strip()
-    
-    return jsonify({'answer': answer})
+    """ % prompt
+
+    try:
+        # Execute the query
+        weaviate_response = weaviate_client.query.raw(weaviate_query)
+        
+        # Debug print to see the actual response from Weaviate
+        logger.info(f"Weaviate response: {weaviate_response}")
+
+        # Check for errors in the response
+        if 'errors' in weaviate_response:
+            logger.error(f"Weaviate errors: {weaviate_response['errors']}")
+            return jsonify({'error': 'Weaviate query error', 'details': weaviate_response['errors']}), 500
+
+        # Extract chunks from Weaviate response
+        chunks = [result['content'] for result in weaviate_response['data']['Get']['DocumentChunk']]
+        context = ' '.join(chunks)
+        
+        # Generate answer using OpenAI
+        response = llm.chat.completions.create(
+            model="glm-4",
+            messages=[
+                {"role": "user", "content": f"{context}\n\nQ: {prompt}\nA:"}
+            ],
+            top_p=0.7,
+            temperature=0.7
+        )
+        answer = response.choices[0].text.strip()
+        
+        return jsonify({'answer': answer})
+    except KeyError as e:
+        logger.error(f"KeyError: {str(e)}")
+        logger.error(traceback.format_exc())
+        return jsonify({'error': 'Error parsing Weaviate response'}), 500
+    except Exception as e:
+        logger.error(f"An error occurred: {str(e)}")
+        logger.error(traceback.format_exc())
+        return jsonify({'error': 'An internal error occurred'}), 500
 
 if __name__ == '__main__':
     # Start RabbitMQ listener in a separate thread
     threading.Thread(target=start_rabbitmq_listener).start()
-    # es.info()
     
     # Start Flask app
     app.run(host='0.0.0.0', port=5000)
