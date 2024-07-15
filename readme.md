@@ -28,3 +28,48 @@ helm + operator 提供了一种便利且具有拓展性的云服务部署方式�
 MySQL Service 中如果使用 loadbalancer 暴露出端口，会无法访问。
 
 # 2 version2
+增加的功能：
+
+- elastic search
+
+- RAG
+
+- openAI API
+
+```plantuml
+@startuml
+actor User
+
+participant "Frontend" as FE
+participant "Backend" as BE
+participant "RabbitMQ" as MQ
+participant "MinIO" as MinIO
+participant "Parsing Module" as PM
+participant "Elasticsearch" as ES
+
+User -> FE : Upload File
+FE -> BE : Send File
+BE -> MQ : Send Message
+BE -> MinIO : Store File
+PM -> MQ : Read Message
+PM -> MinIO : Retrieve File
+PM -> ES : Store Parsed Data
+User -> BE : Search Request
+BE -> ES : Query
+ES -> BE : Search Results
+BE -> User : Return Results
+
+@enduml
+```
+
+## 2.1 elastic-search
+
+使用 elastic-search 数据库提供精确搜索，搜索包含指定内容的文件名。
+
+## 2.2 RAG
+
+向量化的模糊搜索。
+
+## 2.3 AI chat
+
+输入文件名和 prompt，返回大模型生成的结果。

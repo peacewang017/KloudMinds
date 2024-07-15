@@ -23,23 +23,3 @@ spec:
           value: "guest"
         - name: RABBITMQ_DEFAULT_PASS
           value: "guest"
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: rabbitmq
-spec:
-  selector:
-    app: rabbitmq
-  ports:
-    - name: amqp # 添加这一行
-      protocol: TCP
-      port: 5672
-      targetPort: 5672
-      nodePort: 30007
-    - name: management # 添加这一行
-      protocol: TCP
-      port: 15672
-      targetPort: 15672
-      nodePort: 30008
-  type: NodePort

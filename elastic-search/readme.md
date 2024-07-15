@@ -25,12 +25,39 @@ EOF
 
 此时服务应该正常启动
 
+# kibana 部署
+```shell
+cat <<EOF | kubectl apply -f -
+apiVersion: kibana.k8s.elastic.co/v1
+kind: Kibana
+metadata:
+  name: quickstart
+spec:
+  version: 8.14.3
+  count: 1
+  elasticsearchRef:
+    name: quickstart
+EOF
+```
+
 # 2 运行时调试
 
 ## 2.1 获取密码
 （默认用户名为 elastic）
 
 ```shell
-PASSWORD=$(kubectl get secret quickstart-es-elastic-user -o go-template='{{.data.elastic | base64decode}}')
+kubectl get secret quickstart-es-elastic-user -o go-template='{{.data.elastic | base64decode}}'
 ```
 
+## 2.2 使用 Kibana
+```shell
+kubectl port-forward service/quickstart-kb-http 5601
+
+## 浏览器访问 localhost:5601
+```
+
+用户名：elastic search
+
+密码：2.1 中获得的密码
+
+![](images/image.png)
