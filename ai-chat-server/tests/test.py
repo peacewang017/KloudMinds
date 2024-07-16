@@ -6,7 +6,7 @@ with open(file_path, 'r', encoding='utf-8') as file:
     content = file.read().strip()  # 读取文件内容并去除首尾空白字符
 
 # AI_chat_server
-AI_chat_server = 'http://localhost:5001/request'
+AI_chat_server = 'http://localhost:5000/request'
 headers = {
     'Content-Type': 'application/json'
 
