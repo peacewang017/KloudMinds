@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
         - name: retrieve-server
-          image: retrieve-server:latest
+          image: 1098822169/retrieve-server:latest
           ports:
-            - containerPort: 5000
+            - containerPort: 5001

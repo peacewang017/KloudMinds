@@ -6,13 +6,13 @@ WORKDIR /app
 
 # 复制依赖文件并安装依赖
 COPY requirements.txt requirements.txt
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # 复制当前目录下的所有文件到工作目录
 COPY . .
 
 # 暴露端口，与 Flask 应用中的端口一致
-EXPOSE 5000
+EXPOSE 5001
 
 # 启动 Flask 应用
 CMD ["python", "retrieve-server.py"]

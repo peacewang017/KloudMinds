@@ -1,7 +1,9 @@
+# kubectl port-forward service/retrieve-server 5001:5001
+
 import requests
 import time
 
-FLASK_SERVER_URL = 'http://localhost:5000'
+FLASK_SERVER_URL = 'http://localhost:5001'
 
 def read_file_content(filename):
     with open(f'./{filename}', 'r', encoding='utf-8') as file:
