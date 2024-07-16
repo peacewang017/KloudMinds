@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: retrieve-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: retrieve-server
+  template:
+    metadata:
+      labels:
+        app: retrieve-server
+    spec:
+      containers:
+        - name: retrieve-server
+          image: retrieve-server:latest
+          ports:
+            - containerPort: 5000

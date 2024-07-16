@@ -3,23 +3,29 @@ import time
 
 FLASK_SERVER_URL = 'http://localhost:5000'
 
-def upload_to_weaviate(bucketname, filename, content):
+def read_file_content(filename):
+    with open(f'./{filename}', 'r', encoding='utf-8') as file:
+        content = file.read()
+    return content.strip()
+
+def upload_to_weaviate(bucketname, filename, local_filename):
+    content = read_file_content(local_filename)
     url = f'{FLASK_SERVER_URL}/rag_upload'
     data = {'bucketname': bucketname, 'filename': filename, 'content': content}
     response = requests.post(url=url, json=data)
     if response.status_code == 200:
-        print("Upload successful.")
+        print(f"Upload successful for {filename}.")
     else:
-        print("Upload failed.")
+        print(f"Upload failed for {filename}.")
 
 def delete_from_weaviate(bucketname, filename):
     url = f'{FLASK_SERVER_URL}/rag_delete'
     data = {'bucketname': bucketname, 'filename': filename}
     response = requests.delete(url=url, json=data)
     if response.status_code == 200:
-        print("Delete successful.")
+        print(f"Delete successful for {filename}.")
     else:
-        print("Delete failed.")
+        print(f"Delete failed for {filename}.")
 
 def search_in_weaviate(bucketname, keyword):
     url = f'{FLASK_SERVER_URL}/rag_search'
@@ -38,11 +44,9 @@ def search_in_weaviate(bucketname, keyword):
         print("Search failed.")
 
 # Example usage:
-upload_to_weaviate('bucket1', 'file1.txt', '电脑，是利用模拟或者数字电子技术，根据一系列指令指示并且自动执行任意算术或逻辑操作串行的设备。通用计算机因有能遵循被称为“程序”的一般操作集的能力而使得它们能够执行极其广泛的任务。计算机被用作各种工业和娱乐设备的控制系统。这包括简单的特定用途设备（如微波炉和遥控器）、工业设备（如工业机器人和集成电路），及通用设备（如个人电脑和智能手机之类的移动设备）等。')
-
-upload_to_weaviate('bucket1', 'file2.txt', 'Lychee[3] (Lychee is a monotypic taxon and the sole member in the genus Litchi in the soapberry family, Sapindaceae.')
-
-upload_to_weaviate('bucket1', 'file3.txt', 'Yao Ming is a Chinese basketball executive and former professional player. He played for the Shanghai Sharks of the Chinese Basketball Association (CBA) and the Houston Rockets of the National Basketball Association (NBA). Lychee is Jason\'s favourite fruit')
+upload_to_weaviate('bucket1', 'file1.txt', 'file1.txt')
+upload_to_weaviate('bucket1', 'file2.txt', 'file2.txt')
+upload_to_weaviate('bucket1', 'file3.txt', 'file3.txt')
 
 # Uncomment to test deletion
 # delete_from_weaviate('bucket1', 'file1.txt')
@@ -51,4 +55,4 @@ upload_to_weaviate('bucket1', 'file3.txt', 'Yao Ming is a Chinese basketball exe
 
 time.sleep(10)
 
-search_in_weaviate('bucket1', 'what is lychee and who likes it best')
+search_in_weaviate('bucket1', 'what does tian an yan consist of?')
