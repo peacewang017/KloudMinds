@@ -1,0 +1,4 @@
+flask
+weaviate-client
+sentence-transformers
+requests

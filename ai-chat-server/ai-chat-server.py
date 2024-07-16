@@ -1,5 +1,4 @@
 import os
-import requests
 from flask import Flask, request, jsonify
 from openai import OpenAI
 
@@ -7,22 +6,21 @@ app = Flask(__name__)
 
 # 硬编码 API-key
 client = OpenAI(
-    api_key="0de8399931df7b7e632c87930f8c6ad3.oobORQw8lNN5oIoR",
-    base_url="https://open.bigmodel.cn/api/paas/v4/"
+    api_key=os.getenv('OPENAI_API_KEY', '0de8399931df7b7e632c87930f8c6ad3.oobORQw8lNN5oIoR'),
+    base_url=os.getenv('LLM_URL', 'https://open.bigmodel.cn/api/paas/v4/')
 )
 
 # 环境变量引入 OpenAI API
 # api_key = os.getenv('OPENAI_API_KEY')
 # client = OpenAI(api_key=api_key)
 
-# 处理 POST 请求
 @app.route('/request', methods=['POST'])
 def receive_data():
     try:
         # 处理输入
         data = request.json
+        file_content = data.get('content')
         prompt = data.get('prompt')
-        file_content = data.get('file')
 
         if not prompt or not file_content:
             return jsonify({"error": "Invalid data"}), 400

@@ -15,4 +15,4 @@ COPY . .
 EXPOSE 5000
 
 # 启动 Flask 应用
-CMD ["python", "ai-chat-server.py"]
+CMD ["python", "retrieve-server.py"]

@@ -17,9 +17,3 @@ spec:
         image: your_dockerhub_username/ai-chat-server:latest
         ports:
         - containerPort: 5000
-        env:
-        - name: OPENAI_API_KEY
-          valueFrom:
-            secretKeyRef:
-              name: openai-api-key
-              key: api_key
