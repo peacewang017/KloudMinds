@@ -1,0 +1,16 @@
+# 设置 AWS 配置参数
+$AWS_ACCESS_KEY_ID="ASIAWLKYBGL55DRPTJV4"
+$AWS_SECRET_ACCESS_KEY="oSB69nr/Kh7c4nSShAgO2p+eSlEYEDyswxkaE1My"
+$AWS_DEFAULT_REGION="us-east-1"
+$AWS_SESSION_TOKEN="IQoJb3JpZ2luX2VjEB0aCXVzLXdlc3QtMiJHMEUCIEovq1SyIIEgea0JXdQMPBFxuvvzUXXAxLg4LhQKN6AJAiEAxHiuA7ncow5OWhuiVxP9NoiK9nupQGW6NnagWC0tJOsqrQII5v//////////ARAAGgw0MzY2NjA2Nzk0MTkiDGSvhg9Qs7gFwdhTLiqBAoo6ua9T/8WqdPNTmbRvPPVVSxcNnfWmDQPH5xF23lSEPytQCxWoAOH96shDYyAImTLyuvkOWpHnfs++rgwYq+3PL6LqWdi0ztTGo0KvYpDsRpnJb7toDeFcvN2SdvIdw3fA7UWb71d+TiEkUao0F9DM4iYGctN2vwmJEB+DB+TBAYQRq/9QDmXknvpqJA2wzPl+F0/zppquFgzyfOcdANyuFmno5ATvffIs2NmgUj2MM0zpPIzw1wtRX9gniloN4R0MQfbui6piZX06IeFqfXQvIef330lxDy6hhOnd/twbg7zXj4kTkTO4kRawHnUcSGG8v38gsVgsQzMsPE8LUJOGMLin3bQGOp0BaFe6D69yli0FgNSnC9OaVM5A1q6eGtUKnmNhA8jjMlc1NRCqS5Zc/YEUb0vEItP7zZh2UMq4YybrbdIBJFro4u8cwChSXFqRLKWclJ1Su93QDYNH/4sPg4aMC8BwREFjh0lUcO6iyFiEhVqoskhMeUsTzfUiO79afITL4q379mDT0hiynkJMnFSb/n8lHUYNVPwX12xAOhxhJG4cWQ=="
+$ClusterName="MyEKS"
+
+# 配置 AWS CLI
+aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+aws configure set default.region $AWS_DEFAULT_REGION
+aws configure set aws_session_token $AWS_SESSION_TOKEN
+
+# 连接到 EKS 集群
+aws eks --region us-east-1 update-kubeconfig --name $ClusterName
+
