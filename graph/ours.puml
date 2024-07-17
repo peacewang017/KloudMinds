@@ -29,8 +29,6 @@ Cluster_Boundary(cluster, "Kubernetes Cluster") {
     
     Namespace_Boundary(frontend, "Frontend") {
         KubernetesPod(webAppPod, "Web App Pod", "")
-        KubernetesPod(mobileAppPod, "Mobile App Pod", "")
-        KubernetesPod(desktopAppPod, "Desktop App Pod", "")
     }
 
     Namespace_Boundary(backend, "Backend Services") {
@@ -39,6 +37,8 @@ Cluster_Boundary(cluster, "Kubernetes Cluster") {
         KubernetesPod(fileProcessingPod, "File Processing Service Pod", "")
         KubernetesPod(ragRetrievalPod, "RAG Retrieval Pod", "")
         KubernetesPod(aiGenerationPod, "AI Generation Pod", "")
+        KubernetesPod(messageQueuePod, "Message Queue Pod (RabbitMQ)", "")
+        KubernetesPod(vectorDBPod, "Vector Database Pod (Weaviate)", "")
     }
 
     Namespace_Boundary(persistentStorage, "Persistent Storage") {
@@ -46,8 +46,8 @@ Cluster_Boundary(cluster, "Kubernetes Cluster") {
     }
 
     Namespace_Boundary(storage, "Storage") {
-        KubernetesPod(objectStorage, "Object Storage (S3/MinIO)", "")
-        KubernetesPod(metadataDB, "Metadata DB (MySQL/PostgreSQL)", "")
+        KubernetesPod(objectStorage, "Object Storage (MinIO)", "")
+        KubernetesPod(metadataDB, "Metadata DB (MySQL)", "")
     }
 
     Namespace_Boundary(security, "Security") {
@@ -63,27 +63,22 @@ Cluster_Boundary(cluster, "Kubernetes Cluster") {
         KubernetesHpa(hpa, "Horizontal Pod Autoscaler", "")
     }
 
-    Namespace_Boundary(caching, "Caching") {
-        KubernetesPod(redis, "Redis", "")
-    }
-
     KubernetesIng(ingress, "Ingress", "")
 
     ingress --> webAppPod
-    ingress --> mobileAppPod
-    ingress --> desktopAppPod
     webAppPod --> apiServicePod
-    mobileAppPod --> apiServicePod
-    desktopAppPod --> apiServicePod
     apiServicePod --> authServicePod
     apiServicePod --> fileProcessingPod
     apiServicePod --> ragRetrievalPod
+    apiServicePod --> messageQueuePod
+    apiServicePod --> vectorDBPod
     ragRetrievalPod --> aiGenerationPod
     fileProcessingPod --> objectStorage
+    fileProcessingPod --> messageQueuePod
+    fileProcessingPod --> vectorDBPod
     apiServicePod --> metadataDB
     metadataDB --> pvc
     pvc --> objectStorage
-    apiServicePod --> redis
     secretsConfigMaps --> authServicePod
     prometheus --> grafana
     hpa --> apiServicePod

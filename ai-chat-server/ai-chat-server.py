@@ -29,10 +29,11 @@ def receive_data():
         response = client.chat.completions.create(
             model="glm-4",
             messages=[
+                {"role": "system", "content": "You are a helpful assistant named KloudMinds."},
                 {"role": "user", "content": f"{file_content}\n\n{prompt}"}
             ],
-            top_p=0.7,
-            temperature=0.7
+            top_p=0.5,
+            temperature=0.5
         )
 
         ai_answer = response.choices[0].message.content
