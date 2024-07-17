@@ -1,0 +1,97 @@
+@startuml kubernetes
+
+footer Kubernetes Plant-UML
+scale max 1024 width
+
+skinparam nodesep 10
+skinparam ranksep 10
+skinparam linetype ortho
+
+' Kubernetes
+!define KubernetesPuml https://raw.githubusercontent.com/dcasati/kubernetes-PlantUML/master/dist
+
+!includeurl KubernetesPuml/kubernetes_Common.puml
+!includeurl KubernetesPuml/kubernetes_Context.puml
+!includeurl KubernetesPuml/kubernetes_Simplified.puml
+
+!includeurl KubernetesPuml/OSS/KubernetesPod.puml
+!includeurl KubernetesPuml/OSS/KubernetesSvc.puml
+!includeurl KubernetesPuml/OSS/KubernetesIng.puml
+!includeurl KubernetesPuml/OSS/KubernetesPvc.puml
+!includeurl KubernetesPuml/OSS/KubernetesHpa.puml
+
+actor user as KubernetesUser
+
+left to right direction
+
+' Kubernetes Components
+Cluster_Boundary(cluster, "Kubernetes Cluster") {
+    
+    Namespace_Boundary(frontend, "Frontend") {
+        KubernetesPod(webAppPod, "Web App Pod", "")
+        KubernetesPod(mobileAppPod, "Mobile App Pod", "")
+        KubernetesPod(desktopAppPod, "Desktop App Pod", "")
+    }
+
+    Namespace_Boundary(backend, "Backend Services") {
+        KubernetesPod(apiServicePod, "API Service Pod", "")
+        KubernetesPod(authServicePod, "Auth Service Pod", "")
+        KubernetesPod(fileProcessingPod, "File Processing Service Pod", "")
+        KubernetesPod(ragRetrievalPod, "RAG Retrieval Pod", "")
+        KubernetesPod(aiGenerationPod, "AI Generation Pod", "")
+    }
+
+    Namespace_Boundary(persistentStorage, "Persistent Storage") {
+        KubernetesPvc(pvc, "Persistent Volume Claim", "")
+    }
+
+    Namespace_Boundary(storage, "Storage") {
+        KubernetesPod(objectStorage, "Object Storage (S3/MinIO)", "")
+        KubernetesPod(metadataDB, "Metadata DB (MySQL/PostgreSQL)", "")
+    }
+
+    Namespace_Boundary(security, "Security") {
+        KubernetesPod(secretsConfigMaps, "Secrets/ConfigMaps", "")
+    }
+
+    Namespace_Boundary(monitoringLogging, "Monitoring & Logging") {
+        KubernetesPod(prometheus, "Prometheus", "")
+        KubernetesPod(grafana, "Grafana", "")
+    }
+
+    Namespace_Boundary(scalability, "Scalability") {
+        KubernetesHpa(hpa, "Horizontal Pod Autoscaler", "")
+    }
+
+    Namespace_Boundary(caching, "Caching") {
+        KubernetesPod(redis, "Redis", "")
+    }
+
+    KubernetesIng(ingress, "Ingress", "")
+
+    ingress --> webAppPod
+    ingress --> mobileAppPod
+    ingress --> desktopAppPod
+    webAppPod --> apiServicePod
+    mobileAppPod --> apiServicePod
+    desktopAppPod --> apiServicePod
+    apiServicePod --> authServicePod
+    apiServicePod --> fileProcessingPod
+    apiServicePod --> ragRetrievalPod
+    ragRetrievalPod --> aiGenerationPod
+    fileProcessingPod --> objectStorage
+    apiServicePod --> metadataDB
+    metadataDB --> pvc
+    pvc --> objectStorage
+    apiServicePod --> redis
+    secretsConfigMaps --> authServicePod
+    prometheus --> grafana
+    hpa --> apiServicePod
+    hpa --> fileProcessingPod
+    hpa --> ragRetrievalPod
+    hpa --> aiGenerationPod
+}
+
+user --> ingress : Uses
+
+@enduml
