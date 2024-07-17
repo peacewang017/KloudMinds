@@ -1,5 +1,5 @@
 # KloudMinds
-<img src="images/icon.jpg" alt="KloudMinds Icon" style="width: 200px; height: auto;">
+<img src="images/icon2.jpg" alt="KloudMinds Icon" style="width: 200px; height: auto;">
 
 AI 驱动的云原生文件管理服务
 
