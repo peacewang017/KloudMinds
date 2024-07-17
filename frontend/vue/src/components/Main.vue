@@ -20,9 +20,13 @@
                 @mouseenter="iconHover = true"
                 @mouseleave="iconHover = false">
       </el-input>
-      <el-button type="info" plain style="margin-left: 10px" @click="search(1)" round>
+      <el-button-group style="margin-left: 10px">
+        <el-button type="info"  class="mysearch"  @click="search(1)">Exact</el-button>
+        <el-button type="info"  class="mysearch" @click="vaguesearch(1)">Vague</el-button>
+      </el-button-group>
+      <!--<el-button type="info" plain style="margin-left: 10px" @click="search(1)" round>
         <i class="el-icon-right"></i>
-      </el-button>
+      </el-button>-->
       <el-button type="warning" plain style="margin-left: 10px" @click="reset" round>
         <i class="el-icon-refresh-right"></i>
       </el-button>
@@ -136,7 +140,7 @@
         :title="title"
         :visible.sync="resultDialog"
         width="50%">
-      <span>{{aiResult}}</span>
+      <span style="font-size: 20px;">{{aiResult}}</span>
     </el-dialog>
     <!--弹出输入问题-->
     <div style="background-color: #709bc8;">
@@ -329,6 +333,19 @@ export default {
     search(pageNum) {  // 分页查询
       if (pageNum) this.pageNum = pageNum
       this.$request.get('/diskFiles/selectByStr', {
+        params: {
+          pageNum: this.pageNum,
+          pageSize: this.pageSize,
+          str: this.str1,
+        }
+      }).then(res => {
+        this.tableData = res.data?.list
+        this.total = res.data?.total
+      })
+    },
+    vaguesearch(pagenum) {
+      if (pagenum) this.pageNum = pagenum
+      this.$request.get('/diskFiles/selectByStrLike', {
         params: {
           pageNum: this.pageNum,
           pageSize: this.pageSize,
@@ -589,5 +606,22 @@ export default {
 .custom-button:hover {
   background-color: #52aafe; /* 背景变为深蓝色 */
   color: #cfecfe; /* 字体变为浅蓝色 */
+}
+.mysearch {
+  background-color: #feeed2; /* 背景颜色 */
+  color: #8fa8d7; /* 文字颜色 */
+  border: 1px solid #8fa8d7; /* 添加边框，边框宽度为1px */
+  border-radius: 20px; /* 圆角大小 */
+  padding: 10px 17px; /* 减小内边距 */
+  font-size: 12px; /* 减小字体大小 */
+  transition: all 0.3s; /* 过渡效果 */
+  height: calc(100% - 15px);
+}
+
+/*上传文件悬停样式*/
+.mysearch:hover {
+  background-color: #8fa8d7; /* 鼠标悬停时的背景颜色，保持不变 */
+  color: #feeed2; /* 鼠标悬停时的文字颜色，保持不变 */
+  opacity: 0.9; /* 鼠标悬停时的透明度，增加层次感 */
 }
 </style>

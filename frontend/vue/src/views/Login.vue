@@ -42,7 +42,7 @@
           <el-form-item>
             <el-button size="medium" style="width: 100%; background-color: #b0c8fe; border-color: #6184d5; color: #3e64be" @click="login">Login</el-button>
           </el-form-item>
-D
+
           <div style="display: flex; align-items: center">
             <div style="flex: 1"></div>
             <div style="display: flex; flex-direction: column; align-items: center; text-align: center; flex-wrap: wrap;margin-right: 28px">
