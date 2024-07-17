@@ -21,19 +21,29 @@ cd mysql-ndb-operator
 kubectl apply -f docs/examples/example-ndb.yaml
 ```
 
-# 3 运行时调试
+# 3 创建原始数据
+```shell
+kubectl exec -it example-ndb-mysqld-1 -- /bin/bash
 
-## 3.1 检查 service 情况
+# Pod 内
+mysql -u root -p ${PASSWORD}
+
+# 导入 xm-disk.sql
+```
+
+# 4 运行时调试
+
+## 4.1 检查 service 情况
 ```shell
 kubectl get services -l mysql.oracle.com/v1=example-ndb
 ```
 
-## 3.2 检查 pod 情况
+## 4.2 检查 pod 情况
 ```shell
 kubectl get pods -l mysql.oracle.com/v1=example-ndb
 ```
 
-## 3.3 获取 mysql 密码
+## 4.3 获取 mysql 密码
 （账户名为 root）
 
 ```shell
@@ -42,8 +52,7 @@ base64 -d <<< \
      -o jsonpath={.data.password})
 ```
 
-## 3.4 远程连接到 mysql 内调试
+## 4.4 远程连接到 mysql 内调试
 ```shell
 kubectl exec -it example-ndb-mysqld-0 -- /bin/bash
 ```
-

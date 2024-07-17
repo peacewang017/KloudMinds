@@ -4,7 +4,7 @@ Navicat MySQL Data Transfer
 Source Server         : localhost_3306
 Source Server Version : 80033
 Source Host           : localhost:3306
-Source Database       : xm-disk
+Source Database       : cloud_order
 
 Target Server Type    : MYSQL
 Target Server Version : 80033

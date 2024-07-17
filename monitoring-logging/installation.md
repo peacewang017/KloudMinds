@@ -1,12 +1,14 @@
 https://chatgpt.com/share/7a684605-7786-41e1-8709-b1b5f18bd535
 
-## Check Kubectl Context First
+在 KloudVault 项目中配置 Prometheus、Grafana 和 ELK Stack 进行监控和日志管理
+
+# 1 检查 Kubectl Context
 
 ```bash
 kubectl config current-context
 ```
 
-### Prometheus Operator Installation
+## 1.1 安装 Prometheus Operator
 
 ```bash
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
@@ -15,19 +17,19 @@ helm install prometheus-operator prometheus-community/kube-prometheus-stack
 kubectl --namespace default get pods -l "release=prometheus-operator"
 ```
 
-#### Prometheus
+### 1.1.1 Prometheus
 
 ```bash
 kubectl port-forward svc/prometheus-operator-kube-p-prometheus 9090:9090 -n default
 ```
 
-#### Alertmanager
+### 1.1.2 Alertmanager
 
 ```bash
 kubectl port-forward svc/prometheus-operator-kube-p-alertmanager 9093:9093 -n default
 ```
 
-#### Grafana
+### 1.1.3 Grafana
 
 ![1720599854497](image/installation/1720599854497.png)
 
