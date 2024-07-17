@@ -1,7 +1,7 @@
 # kubectl port-forward service/ai-chat-server 5000:5000
 
-import gradio as gr
 import requests
+import gradio as gr
 
 # Function to query the Flask AI chat server
 def query_flask_server(prompt, file_content):

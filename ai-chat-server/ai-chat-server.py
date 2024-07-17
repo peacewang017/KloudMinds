@@ -29,7 +29,7 @@ def receive_data():
         response = client.chat.completions.create(
             model="glm-4",
             messages=[
-                {"role": "system", "content": "You are a helpful assistant named KloudMinds."},
+                {"role": "system", "content": "You are a helpful assistant named KloudMinds. KloudMinds is an AI-driven Cloud-Native file management service provided by KloudCrew."},
                 {"role": "user", "content": f"{file_content}\n\n{prompt}"}
             ],
             top_p=0.5,
