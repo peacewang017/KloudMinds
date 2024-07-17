@@ -1,3 +1,5 @@
+# kubectl port-forward service/ai-chat-server 5000:5000
+
 import requests
 
 # 从文件中读取 content 内容
