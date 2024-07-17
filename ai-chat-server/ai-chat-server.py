@@ -22,7 +22,7 @@ def receive_data():
         file_content = data.get('content')
         prompt = data.get('prompt')
 
-        if not prompt or not file_content:
+        if not prompt:
             return jsonify({"error": "Invalid data"}), 400
 
         # 调用 API

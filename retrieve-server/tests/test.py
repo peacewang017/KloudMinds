@@ -45,16 +45,16 @@ def search_in_weaviate(bucketname, keyword):
     else:
         print("Search failed.")
 
-# Example usage:
-upload_to_weaviate('bucket1', 'file1.txt', 'file1.txt')
-upload_to_weaviate('bucket1', 'file2.txt', 'file2.txt')
-upload_to_weaviate('bucket1', 'file3.txt', 'file3.txt')
-
-# Uncomment to test deletion
+# # Uncomment to test deletion
 # delete_from_weaviate('bucket1', 'file1.txt')
 # delete_from_weaviate('bucket1', 'file2.txt')
 # delete_from_weaviate('bucket1', 'file3.txt')
 
-time.sleep(10)
+# # Example usage:
+# upload_to_weaviate('bucket1', 'file1.txt', 'file1.txt')
+# upload_to_weaviate('bucket1', 'file2.txt', 'file2.txt')
+# upload_to_weaviate('bucket1', 'file3.txt', 'file3.txt')
 
-search_in_weaviate('bucket1', 'what does tian an yan consist of?')
+# time.sleep(10)
+
+search_in_weaviate('bucket1', 'a meal consists of many dishes')

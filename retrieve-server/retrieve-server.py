@@ -5,7 +5,7 @@ import weaviate
 from weaviate.exceptions import UnexpectedStatusCodeException
 from sentence_transformers import SentenceTransformer
 import requests
-import re
+import spacy
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -18,6 +18,10 @@ weaviate_client = weaviate.Client(url=WEAVIATE_URL)
 
 # Initialize model
 model = SentenceTransformer('all-MiniLM-L6-v2')
+
+# Initialize spaCy models
+nlp_en = spacy.load('en_core_web_sm')
+nlp_zh = spacy.load('zh_core_web_sm')
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -70,14 +74,15 @@ def create_schema(client):
 def text_to_vector(text, model):
     return model.encode(text).tolist()
 
-def chunk_text(text):
-    chunks = re.split(r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\。)', text)
-    # 去除空字符串
-    chunks = [chunk.strip() for chunk in chunks if chunk.strip()]
-    return chunks
+def chunk_text(text, language='en'):
+    if language == 'en':
+        doc = nlp_en(text)
+    else:
+        doc = nlp_zh(text)
+    return [sent.text.strip() for sent in doc.sents]
 
-def import_data(client, model, bucketname, filename, content):
-    chunks = list(chunk_text(content))
+def import_data(client, model, bucketname, filename, content, language='en'):
+    chunks = chunk_text(content, language)
     for chunknum, chunk in enumerate(chunks):
         article_data = {
             "bucketname": bucketname,
@@ -137,7 +142,8 @@ def rag_upload():
     bucketname = data.get('bucketname')
     filename = data.get('filename')
     content = data.get('content')
-    import_data(weaviate_client, model, bucketname, filename, content)
+    language = data.get('language', 'en')
+    import_data(weaviate_client, model, bucketname, filename, content, language)
     return jsonify({"message": "Articles uploaded successfully."}), 200
 
 @app.route('/rag_delete', methods=['DELETE'])
@@ -153,16 +159,17 @@ def rag_search():
     data = request.get_json()
     bucketname = data.get('bucketname')
     targetcontent = data.get('targetcontent')
+    language = data.get('language', 'en')
     response = []
 
-    query_chunks = list(chunk_text(targetcontent))
+    query_chunks = chunk_text(targetcontent, language)
 
     for chunk in query_chunks:
         query_vector = text_to_vector(chunk, model)
         near_text = {
             "concepts": [chunk],
             "vector": query_vector,
-            "distance": 0.4
+            "distance": 0.5
         }
 
         result = weaviate_client.query.get("Article", ["bucketname", "filename", "content", "chunknum"]).with_where({
