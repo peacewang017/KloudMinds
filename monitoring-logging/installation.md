@@ -36,8 +36,10 @@ kubectl port-forward svc/prometheus-operator-kube-p-alertmanager 9093:9093 -n de
 Access Grafana with the following command:
 
 ```bash
-kubectl get secret --namespace default grafana -o jsonpath="{.data.admin-password}"
+kubectl get secret --namespace default prometheus-operator-grafana -o jsonpath="{.data.admin-password}"
 # go https://www.base64decode.org/ to decode the password
+# admin
+# prom-operator
 kubectl port-forward svc/prometheus-operator-grafana 3000:80 -n default 
 # go http://localhost:3000/ to access Grafana
 ```
