@@ -20,6 +20,8 @@ weaviate_client = weaviate.Client(url=WEAVIATE_URL)
 model = SentenceTransformer('all-MiniLM-L6-v2')
 
 # Initialize spaCy models
+spacy.cli.download("en_core_web_sm")
+spacy.cli.download("zh_core_web_sm")
 nlp_en = spacy.load('en_core_web_sm')
 nlp_zh = spacy.load('zh_core_web_sm')
 

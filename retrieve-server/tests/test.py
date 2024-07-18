@@ -57,4 +57,4 @@ def search_in_weaviate(bucketname, keyword):
 
 # time.sleep(10)
 
-search_in_weaviate('bucket1', 'a meal consists of many dishes')
+search_in_weaviate('bucket1', 'chinese royal meal')

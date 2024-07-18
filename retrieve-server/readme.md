@@ -44,7 +44,6 @@ GET
 
 # 2 容器化和部署
 
-
 ### 1. 构建并推送 Docker 镜像
 
 首先，确保您已登录到您的容器注册表。例如，如果使用 Docker Hub：
@@ -67,7 +66,6 @@ docker push 1098822169/retrieve-server:latest
 kubectl apply -f retrieve-deployment.yaml
 kubectl apply -f retrieve-service.yaml
 ```
-
 
 ### 3. 验证部署
 
