@@ -11,7 +11,6 @@ with open(file_path, 'r', encoding='utf-8') as file:
 AI_chat_server = 'http://localhost:5000/request'
 headers = {
     'Content-Type': 'application/json'
-
 }
 data = {
     "content": content,
