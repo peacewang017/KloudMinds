@@ -1,47 +1,37 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: minio
+  name: mysql
 spec:
-  serviceName: "minio"
-  replicas: 4
+  serviceName: mysql
+  replicas: 1
   selector:
     matchLabels:
-      app: minio
+      app: mysql
   template:
     metadata:
       labels:
-        app: minio
+        app: mysql
     spec:
       containers:
-        - name: minio
-          image: minio/minio:latest
-          args:
-            - server
-            - http://minio-{0...3}.minio.default.svc.cluster.local/data
+        - name: mysql
+          image: mysql:latest
           env:
-            - name: MINIO_ROOT_USER
-              value: minioadmin
-            - name: MINIO_ROOT_PASSWORD
-              value: minioadmin
+            - name: MYSQL_ROOT_PASSWORD
+              value: "123456"  # 替换为实际的 MySQL root 密码
           ports:
-            - containerPort: 9000
+            - containerPort: 3306
+              name: mysql
           volumeMounts:
-            - name: data
-              mountPath: /data
-            - name: config
-              mountPath: /root/.minio/config.json
-              subPath: config.json
-      volumes:
-        - name: config
-          configMap:
-            name: minio-config
+            - name: mysql-persistent-storage
+              mountPath: /var/lib/mysql
+      # 在这里添加 securityContext 以调整权限
   volumeClaimTemplates:
     - metadata:
-        name: data
+        name: mysql-persistent-storage
       spec:
-        accessModes: ["ReadWriteMany"]
-        storageClassName: "efs-default"
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: efs-default
         resources:
           requests:
-            storage: 100Gi
+            storage: 10Gi  # 根据需要调整存储大小

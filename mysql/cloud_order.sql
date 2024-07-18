@@ -15,7 +15,7 @@ Date: 2024-07-17 22:38:10
 
 SET FOREIGN_KEY_CHECKS=0;
 
--- ----------------------------
+-- -------------------chinese royal meal---------
 -- Table structure for admin
 -- ----------------------------
 DROP TABLE IF EXISTS `admin`;

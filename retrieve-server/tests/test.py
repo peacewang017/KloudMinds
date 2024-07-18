@@ -57,4 +57,4 @@ def search_in_weaviate(bucketname, keyword):
 
 # time.sleep(10)
 
-search_in_weaviate('bucket1', 'chinese royal meal')
+search_in_weaviate('bucket11', 'highest form of Tian An Yan during that time had around 28 dishes at best')
