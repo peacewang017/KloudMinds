@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.DiskFilesMapper">
+
+    <sql id="Base_Column_List">
+        id,name,folder,file,user_id,type,size,crate_time,update_time,folder_id,root_folder_id,`delete`
+    </sql>
+
+
+    <select id="selectAll" resultType="com.example.entity.DiskFiles">
+        select
+        disk_files.*, user.name as userName
+        from disk_files
+        left join user
+        on disk_files.user_id = user.id
+        <where>
+            `delete` = 0
+            <if test="name != null"> and disk_files.name like concat('%', #{name}, '%')</if>
+            <if test="userId != null"> and disk_files.user_id = #{userId}</if>
+            <choose>
+                <when test="category == 'img'">
+                    and (disk_files.type = 'jpg' or  disk_files.type = 'jpeg' or  disk_files.type = 'png' or  disk_files.type = 'gif')
+                </when>
+                <when test="category == 'video'">
+                    and disk_files.type = 'mp4'
+                </when>
+                <when test="category == 'zip'">
+                    and (disk_files.type = 'zip' or  disk_files.type = 'rar' or  disk_files.type = 'gz')
+                </when>
+                <otherwise>
+                    <if test="folderId == null"> and disk_files.folder_id is null</if>
+                    <if test="folderId != null"> and disk_files.folder_id = #{folderId}</if>
+                </otherwise>
+            </choose>
+        </where>
+        order by disk_files.id desc
+    </select>
+
+    <select id="selectById" resultType="com.example.entity.DiskFiles">
+        select
+        <include refid="Base_Column_List" />
+        from disk_files
+        where id = #{id}
+    </select>
+
+    <select id="selectByFolderId" resultType="com.example.entity.DiskFiles">
+        select
+        *
+        from disk_files
+        where `delete` = 0 and folder_id = #{folderId}
+    </select>
+
+    <select id="selectAllData" resultType="com.example.entity.DiskFiles">
+        select
+        disk_files.*, user.name as userName
+        from disk_files
+        left join user
+        on disk_files.user_id = user.id
+        <where>
+            <if test="name != null"> and disk_files.name like concat('%', #{name}, '%')</if>
+        </where>
+        order by disk_files.id desc
+    </select>
+
+    <select id="selectTrash" resultType="com.example.entity.Trash">
+        select trash.*, disk_files.type from trash
+        left join disk_files
+        on trash.file_id = disk_files.id
+        <where>
+            <if test="userId != null"> and trash.user_id = #{userId}</if>
+        </where>
+        order by trash.id desc
+    </select>
+
+    <select id="selectAllByFolderId" resultType="com.example.entity.DiskFiles">
+        select
+            *
+        from disk_files
+        where folder_id = #{folderId}
+    </select>
+    <select id="selectByNameList" resultType="com.example.entity.DiskFiles" parameterType="java.util.List">
+        SELECT * FROM disk_files WHERE name IN
+        <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+    <select id="selectByUserId" resultType="com.example.entity.DiskFiles" parameterType="java.lang.Integer">
+        select * from disk_files where user_id = #{userId}
+    </select>
+
+    <delete id="deleteById">
+        delete from disk_files
+        where  id = #{id}
+    </delete>
+
+    <delete id="deleteBatch">
+        delete from disk_files where user_id = #{userId} and `delete` = 1
+    </delete>
+
+    <insert id="insert" parameterType="com.example.entity.DiskFiles" useGeneratedKeys="true" keyProperty="id">
+        insert into disk_files
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="name != null">name,</if>
+            <if test="folder != null">folder,</if>
+            <if test="file != null">file,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="type != null">type,</if>
+            <if test="size != null">size,</if>
+            <if test="crateTime != null">crate_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="folderId != null">folder_id,</if>
+            <if test="rootFolderId != null">root_folder_id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="name != null">#{name},</if>
+            <if test="folder != null">#{folder},</if>
+            <if test="file != null">#{file},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="type != null">#{type},</if>
+            <if test="size != null">#{size},</if>
+            <if test="crateTime != null">#{crateTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="folderId != null">#{folderId},</if>
+            <if test="rootFolderId != null">#{rootFolderId},</if>
+        </trim>
+    </insert>
+
+    <update id="updateById" parameterType="com.example.entity.DiskFiles">
+        update disk_files
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="folder != null">
+                folder = #{folder},
+            </if>
+            <if test="file != null">
+                file = #{file},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="type != null">
+                type = #{type},
+            </if>
+            <if test="size != null">
+                size = #{size},
+            </if>
+            <if test="crateTime != null">
+                crate_time = #{crateTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="folderId != null">
+                folder_id = #{folderId},
+            </if>
+            <if test="rootFolderId != null">
+                root_folder_id = #{rootFolderId},
+            </if>
+            <if test="delete != null">
+                `delete` = #{delete},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+</mapper>

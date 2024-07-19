@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.TrashMapper">
+
+    <sql id="Base_Column_List">
+        id,file_id,name,size,time,user_id
+    </sql>
+
+    <select id="selectAll" resultType="com.example.entity.Trash">
+        select
+        trash.*, user.name as userName
+        from trash
+        left join user
+        on trash.user_id = user.id
+        <where>
+            <if test="name != null"> and trash.name like concat('%', #{name}, '%')</if>
+        </where>
+        order by trash.id desc
+    </select>
+
+    <select id="selectById" resultType="com.example.entity.Trash">
+        select
+        <include refid="Base_Column_List" />
+        from trash
+        where id = #{id}
+    </select>
+
+    <delete id="deleteById">
+        delete from trash
+        where  id = #{id}
+    </delete>
+
+    <delete id="deleteByFileId">
+        delete from trash
+        where  file_id = #{fileId}
+    </delete>
+
+    <insert id="insert" parameterType="com.example.entity.Trash" useGeneratedKeys="true" keyProperty="id">
+        insert into trash
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="fileId != null">file_id,</if>
+            <if test="name != null">name,</if>
+            <if test="size != null">size,</if>
+            <if test="time != null">time,</if>
+            <if test="userId != null">user_id,</if>
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="fileId != null">#{fileId},</if>
+            <if test="name != null">#{name},</if>
+            <if test="size != null">#{size},</if>
+            <if test="time != null">#{time},</if>
+            <if test="userId != null">#{userId},</if>
+
+        </trim>
+    </insert>
+
+    <update id="updateById" parameterType="com.example.entity.Trash">
+        update trash
+        <set>
+            <if test="fileId != null">
+                file_id = #{fileId},
+            </if>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="size != null">
+                size = #{size},
+            </if>
+            <if test="time != null">
+                time = #{time},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+
+        </set>
+        where id = #{id}
+    </update>
+
+</mapper>

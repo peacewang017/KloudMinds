@@ -1,7 +1,6 @@
-# 前置条件
-确保 EFS/readme.md 中的 3 个操作（配置 cli + 创建并挂在 EFS + 部署 storage-class）已经完成
+Message queue component, used for backend to send requests to parser-server and retrieve-server.
 
-# 使用 yaml 部署
+# Deploy Using YAML
 ```shell
 kubectl apply -f rabbitmq-deployment.yaml
 kubectl apply -f rabbitmq-service.yaml

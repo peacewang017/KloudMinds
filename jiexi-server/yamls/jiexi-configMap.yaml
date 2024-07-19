@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: jiexi-config
+data:
+  application.yaml: |
+    minio:
+      endpoint: http://minio:9000
+      access-key: minioadmin
+      secret-key: minioadmin
+    spring:
+      rabbitmq:
+        host: rabbitmq
+        port: 5672
+        username: guest
+        password: guest
+      data:
+        elasticsearch:
+          client:
+            rest:
+              uris: http://elasticsearch:9200
+    flask:
+      server:
+        url: http://retrieve-server:5001
+    server:
+      port: 9898

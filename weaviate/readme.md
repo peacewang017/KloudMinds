@@ -1,5 +1,7 @@
+Cloud-based vector database service.
+
 # 1 部署
-直接参考：
+Refer directly to:
 https://weaviate.io/developers/weaviate/installation/kubernetes
 
 ```shell
@@ -16,7 +18,7 @@ helm upgrade --install \
   --values ./values.yaml
 ```
 
-# 2 看查 service
+# 2 Check Service
 ```shell
 kubectl get svc -n weaviate
 ```

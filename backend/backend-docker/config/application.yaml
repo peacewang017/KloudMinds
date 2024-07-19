@@ -1,0 +1,66 @@
+minio:
+  endpoint: http://minio:9000
+  access-key: minioadmin
+  secret-key: minioadmin
+
+server:
+  port: 9090
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root   #数据库用户名
+    password: XwoTkjQRytu7gk0i #数据库密码
+    url: jdbc:mysql://example-ndb-mysqld:3306/cloud_order?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&useSSL=false&serverTimezone=GMT%2b8&allowPublicKeyRetrieval=true
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+  rabbitmq:
+    host: rabbitmq
+    port: 5672
+    username: guest
+    password: guest
+  data:
+    elasticsearch:
+      client:
+        rest:
+          uris: http://elasticsearch:9200
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.example.entity
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true
+
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+  params: count=countSql
+
+logging:
+  level:
+    com.example: DEBUG
+
+knife4j:
+  enable: true
+  openapi:
+    title: ????????
+    description: "Knife4j API"
+    version: v1.0.0
+    group:
+      default:
+        group-name: default
+        api-rule: package
+        api-rule-resources:
+          - com.example.controller
+
+flask:
+  server:
+    url: http://retrieve-server:5001
+ai:
+  chat:
+    server:
+      url: http://ai-chat-server:5000

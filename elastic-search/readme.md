@@ -1,8 +1,8 @@
-# 1 部署
-# 前置条件
-确保 EFS/readme.md 中的 3 个操作（配置 cli + 创建并挂在 EFS + 部署 storage-class）已经完成
+Deployment of elastic-search searvice, using operator.
 
-# operator 部署
+# 1 Deployment
+
+# 1.1 Deploy elastic-search
 ```shell
 kubectl create -f https://download.elastic.co/downloads/eck/2.13.0/crds.yaml
 
@@ -23,9 +23,11 @@ spec:
 EOF
 ```
 
-此时服务应该正常启动
+At this point, the service should start normally.
 
-# kibana 部署
+# 1.2 Deploy Kibana
+Kibana is the console for elastic-search.
+
 ```shell
 cat <<EOF | kubectl apply -f -
 apiVersion: kibana.k8s.elastic.co/v1
@@ -40,24 +42,22 @@ spec:
 EOF
 ```
 
-# 2 运行时调试
+# 2 Runtime Debugging
 
-## 2.1 获取密码
-（默认用户名为 elastic）
+## 2.1 Retrieve Password
+(Default username is elastic)
 
 ```shell
 kubectl get secret quickstart-es-elastic-user -o go-template='{{.data.elastic | base64decode}}'
 ```
 
-## 2.2 使用 Kibana
+## 2.2 2.2 Using Kibana
 ```shell
 kubectl port-forward service/quickstart-kb-http 5601
 
-## 浏览器访问 https://localhost:5601
+## Access https://localhost:5601 in your browser
 ```
 
-用户名：elastic
+Username: elastic
 
-密码：2.1 中获得的密码
-
-![](images/image.png)
+Password: Retrieved in step 2.1s

@@ -1,1 +1,11 @@
 .vscode/
+frontend/vue/node_modules/
+/backend/backend-src/springboot/target/
+/backend/target
+/backend/backend-docker/target
+jiexi-server/jiexi/.mvn
+jiexi-server/jiexi/mvnw
+jiexi-server/jiexi/mvnw.cmd
+jiexi-server/jiexi/pom.xml
+jiexi-server/jiexi/HELP.md
+jiexi-server/jiexi-docker/target/

@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jiexi-deployment
+  labels:
+    app: jiexi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jiexi
+  template:
+    metadata:
+      labels:
+        app: jiexi
+    spec:
+      containers:
+      - name: jiexi
+        image: worldless/jiexi:latest
+        ports:
+        - containerPort: 9898
+        envFrom:
+        - configMapRef:
+            name: jiexi-config
+        - secretRef:
+            name: jiexi-secrets
+        volumeMounts:
+        - name: config-volume
+          mountPath: /config
+      volumes:
+      - name: config-volume
+        configMap:
+          name: jiexi-config
