@@ -20,17 +20,13 @@ Team Member:
 
 ```                                               
 
-<img src="images/icon.jpg" alt="KloudMinds Icon" style="width: 200px; height: auto;">
-
-AI-driven cloud-native file management service
+AI-driven cloud-native file management and R-A-G service
 
 - Large storage space
 
 - Fast retrieval (exact/fuzzy)
 
 - AI reading analysis
-
-A next-gen cloud-native file-management system with AI based functions that can quickly sort through all your files, find what you need, and even give you a summary of the key point.
 
 ### 1.2 System Architecture
 #### 1.2.1 General structure
@@ -59,8 +55,6 @@ A next-gen cloud-native file-management system with AI based functions that can 
 ## 2. Environment Setup
 
 ### 2.1 Prerequisites
-List all the prerequisites needed to set up the environment.
-
 - **Git**
 - **Kubernetes**
 - **AWS CLI**
